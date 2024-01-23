@@ -66,6 +66,6 @@
     "dbUser": "web",
     "dbPort": 3306,
     "containerPort": 4000,
-    "containerImage": ""
+    "containerImage": "https://github.com/mabego/snippetbox-mysql"
   }
 }
