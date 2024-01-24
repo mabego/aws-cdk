@@ -1,4 +1,4 @@
-# Fargate Service with ALB and RDS Serverless
+# Fargate Service with ALB and Aurora
 
 This repository deploys a web app to ECS on AWS Fargate with an Aurora database using AWS CDK.
 
