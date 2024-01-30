@@ -9,9 +9,9 @@ on:
         required: false
         type: string
 
-  push:
-    paths:
-      - cdk.json
+#  push:
+#    paths:
+#      - cdk.json
 
 env:
   RELEASE_TAG: ${{ inputs.release_tag || 'latest' }}
