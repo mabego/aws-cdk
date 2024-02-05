@@ -1,11 +1,11 @@
 import {
-  App,
+  type App,
   aws_lambda_nodejs,
   custom_resources,
   CustomResource,
   Fn,
   Stack,
-  StackProps,
+  type StackProps,
 } from "aws-cdk-lib";
 import { HostedZone } from "aws-cdk-lib/aws-route53";
 import { PolicyStatement } from "aws-cdk-lib/aws-iam";
@@ -26,7 +26,7 @@ export class DnsStack extends Stack {
   }
 
   /** A Custom Resource to update the Domain registrar with Hosted Zone name servers */
-  updateRegDomain(domain: string, hostedZone: HostedZone) {
+  updateRegDomain(domain: string, hostedZone: HostedZone): void {
     const provider = new custom_resources.Provider(this, "Provider", {
       onEventHandler: new aws_lambda_nodejs.NodejsFunction(
         this,
@@ -38,10 +38,10 @@ export class DnsStack extends Stack {
               resources: ["*"],
             }),
           ],
-        },
+        }
       ),
     });
-    new CustomResource(this, "CustomResource", {
+    void new CustomResource(this, "CustomResource", {
       serviceToken: provider.serviceToken,
       properties: {
         domain,

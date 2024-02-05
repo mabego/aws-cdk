@@ -1,11 +1,11 @@
-import { App, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
-import { Port, SubnetType, Vpc } from "aws-cdk-lib/aws-ec2";
+import { type App, RemovalPolicy, Stack, type StackProps } from "aws-cdk-lib";
+import { Port, SubnetType, type Vpc } from "aws-cdk-lib/aws-ec2";
 import {
   AuroraCapacityUnit,
   AuroraMysqlEngineVersion,
   Credentials,
   DatabaseClusterEngine,
-  DatabaseSecret,
+  type DatabaseSecret,
   ParameterGroup,
   ServerlessCluster,
 } from "aws-cdk-lib/aws-rds";
@@ -59,7 +59,7 @@ export class RdsServerlessStack extends Stack {
         engine: DatabaseClusterEngine.auroraMysql({
           version: AuroraMysqlEngineVersion.VER_2_11_3,
         }),
-        parameterGroup: parameterGroup,
+        parameterGroup,
         vpc: props.vpc,
         vpcSubnets: { subnetType: SubnetType.PRIVATE_ISOLATED },
         credentials: Credentials.fromSecret(this.dbSecret, dbUser),
@@ -70,7 +70,7 @@ export class RdsServerlessStack extends Stack {
         defaultDatabaseName: dbName,
         deletionProtection: false,
         removalPolicy: RemovalPolicy.DESTROY,
-      },
+      }
     );
 
     mysqlRdsServerless.connections.allowFromAnyIpv4(Port.tcp(dbPort));

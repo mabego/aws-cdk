@@ -1,5 +1,5 @@
-import { Construct } from "constructs";
-import { Stack, StackProps } from "aws-cdk-lib";
+import { type Construct } from "constructs";
+import { Stack, type StackProps } from "aws-cdk-lib";
 import { IpAddresses, SubnetType, Vpc } from "aws-cdk-lib/aws-ec2";
 
 export interface VpcProps extends StackProps {

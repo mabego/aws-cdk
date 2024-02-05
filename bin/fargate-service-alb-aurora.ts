@@ -12,21 +12,21 @@ const app = new App();
 const dnsStack = new DnsStack(app, "DnsStack", {});
 
 const certStack = new CertStack(app, "CertStack", {
-  hostedZone: dnsStack.hostedZone
+  hostedZone: dnsStack.hostedZone,
 });
 
 const certStackDelete = new CertStackDelete(app, "CertStackDelete", {
-  hostedZone: dnsStack.hostedZone
+  hostedZone: dnsStack.hostedZone,
 });
 
 certStackDelete.addDependency(certStack);
 
 const vpcStack = new VPCStack(app, "VPCStack", {
-  maxAzs: 2
+  maxAzs: 2,
 });
 
 const rdsStack = new RdsServerlessStack(app, "RDSStack", {
-  vpc: vpcStack.vpc
+  vpc: vpcStack.vpc,
 });
 
 rdsStack.addDependency(vpcStack);
@@ -35,7 +35,7 @@ const ecsStack = new ECSStack(app, "ECSStack", {
   vpc: vpcStack.vpc,
   dbSecretArn: rdsStack.dbSecret.secretArn,
   cert: certStack.cert,
-  hostedZone: dnsStack.hostedZone
+  hostedZone: dnsStack.hostedZone,
 });
 
 ecsStack.addDependency(rdsStack);

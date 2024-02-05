@@ -11,17 +11,26 @@
     "cdk": "cdk"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.11",
-    "@types/node": "20.11.5",
-    "aws-cdk": "2.122.0",
+    "@types/jest": "^29.5.12",
+    "@types/node": "20.11.16",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
+    "aws-cdk": "2.126.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard-with-typescript": "^43.0.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1",
     "jest": "^29.7.0",
+    "prettier": "^3.2.5",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "~5.3.3"
   },
   "dependencies": {
-    "aws-cdk-lib": "2.122.0",
-    "aws-sdk": "^2.1542.0",
+    "aws-cdk-lib": "2.126.0",
+    "aws-sdk": "^2.1550.0",
     "constructs": "^10.3.0",
     "source-map-support": "^0.5.21"
   }
