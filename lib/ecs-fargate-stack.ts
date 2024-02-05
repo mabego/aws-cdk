@@ -1,5 +1,5 @@
-import { App, Stack, StackProps } from "aws-cdk-lib";
-import { Vpc } from "aws-cdk-lib/aws-ec2";
+import { type App, Stack, type StackProps } from "aws-cdk-lib";
+import { type Vpc } from "aws-cdk-lib/aws-ec2";
 import {
   ContainerImage,
   Cluster,
@@ -10,8 +10,8 @@ import {
   ApplicationLoadBalancedServiceRecordType,
 } from "aws-cdk-lib/aws-ecs-patterns";
 import { Secret } from "aws-cdk-lib/aws-secretsmanager";
-import { HostedZone } from "aws-cdk-lib/aws-route53";
-import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
+import { type HostedZone } from "aws-cdk-lib/aws-route53";
+import { type Certificate } from "aws-cdk-lib/aws-certificatemanager";
 
 export interface ECSStackProps extends StackProps {
   vpc: Vpc;
@@ -29,7 +29,7 @@ export class ECSStack extends Stack {
     const creds = Secret.fromSecretCompleteArn(
       this,
       "dbCreds",
-      props.dbSecretArn,
+      props.dbSecretArn
     );
     const subDomain = this.node.tryGetContext("subDomain") as string;
 
@@ -49,9 +49,9 @@ export class ECSStack extends Stack {
         desiredCount: 2,
         taskImageOptions: {
           image: ContainerImage.fromRegistry(
-            containerImage + `${process.env.RELEASE || "latest"}`,
+            containerImage + `${process.env.RELEASE ?? "latest"}`
           ),
-          containerPort: containerPort,
+          containerPort,
           enableLogging: true,
           secrets: {
             DSN: ecsSecret.fromSecretsManager(creds),
@@ -61,7 +61,7 @@ export class ECSStack extends Stack {
         assignPublicIp: true,
         serviceName: "fargateService",
         certificate: props.cert,
-      },
+      }
     );
 
     fargateService.targetGroup.configureHealthCheck({ path: "/ping" });

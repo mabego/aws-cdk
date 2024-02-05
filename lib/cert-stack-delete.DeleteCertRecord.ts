@@ -1,4 +1,9 @@
-import { Route53 } from "aws-sdk";
+import { type AWSError, Route53 } from "aws-sdk";
+import { type PromiseResult } from "aws-sdk/lib/request";
+import {
+  type ChangeResourceRecordSetsResponse,
+  type ListResourceRecordSetsResponse,
+} from "aws-sdk/clients/route53";
 
 const route53 = new Route53({ region: "us-east-1" });
 const certRecordType: string = "CNAME";
@@ -11,12 +16,12 @@ const changeAction: string = "DELETE";
  * https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/837.
  * This function deletes the CNAME record created by ACM.
  */
-const deleteCertificateRecord = (
+const deleteCertificateRecord = async (
   hostedZoneId: string,
   name: string,
-  value: string,
-) =>
-  route53
+  value: string
+): Promise<PromiseResult<ChangeResourceRecordSetsResponse, AWSError>> =>
+  await route53
     .changeResourceRecordSets({
       HostedZoneId: hostedZoneId,
       ChangeBatch: {
@@ -35,8 +40,12 @@ const deleteCertificateRecord = (
     })
     .promise();
 
-const listResourceRecordSets = (hostedZoneId: string) =>
-  route53.listResourceRecordSets({ HostedZoneId: hostedZoneId }).promise();
+const listResourceRecordSets = async (
+  hostedZoneId: string
+): Promise<PromiseResult<ListResourceRecordSetsResponse, AWSError>> =>
+  await route53
+    .listResourceRecordSets({ HostedZoneId: hostedZoneId })
+    .promise();
 
 export async function handler(event: any): Promise<any> {
   const { hostedZoneId } = event.ResourceProperties;
@@ -52,7 +61,7 @@ export async function handler(event: any): Promise<any> {
   }
 
   const certRecord = recordSetsList.ResourceRecordSets.find(
-    (r) => r.Type === certRecordType,
+    (r) => r.Type === certRecordType
   );
   const certRecordName = certRecord?.Name as string;
   const value = certRecord?.ResourceRecords?.find(Boolean)?.Value as string;

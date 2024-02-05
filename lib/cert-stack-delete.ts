@@ -1,12 +1,12 @@
 import {
-  App,
+  type App,
   aws_lambda_nodejs,
   custom_resources,
   CustomResource,
   Stack,
-  StackProps,
+  type StackProps,
 } from "aws-cdk-lib";
-import { HostedZone } from "aws-cdk-lib/aws-route53";
+import { type HostedZone } from "aws-cdk-lib/aws-route53";
 import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 
 export interface CertStackDeleteProps extends StackProps {
@@ -22,7 +22,7 @@ export class CertStackDelete extends Stack {
     this.deleteCertRecord(rootDomain, props.hostedZone);
   }
 
-  deleteCertRecord(domain: string, hostedZone: HostedZone) {
+  deleteCertRecord(domain: string, hostedZone: HostedZone): void {
     const provider = new custom_resources.Provider(this, "Provider", {
       onEventHandler: new aws_lambda_nodejs.NodejsFunction(
         this,
@@ -37,10 +37,10 @@ export class CertStackDelete extends Stack {
               resources: ["*"],
             }),
           ],
-        },
+        }
       ),
     });
-    new CustomResource(this, "CustomResource", {
+    void new CustomResource(this, "CustomResource", {
       serviceToken: provider.serviceToken,
       properties: {
         hostedZoneId: hostedZone.hostedZoneId,

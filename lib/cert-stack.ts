@@ -1,9 +1,9 @@
-import { App, Stack, StackProps } from "aws-cdk-lib";
+import { type App, Stack, type StackProps } from "aws-cdk-lib";
 import {
   Certificate,
   CertificateValidation,
 } from "aws-cdk-lib/aws-certificatemanager";
-import { HostedZone } from "aws-cdk-lib/aws-route53";
+import { type HostedZone } from "aws-cdk-lib/aws-route53";
 
 export interface CertStackProps extends StackProps {
   hostedZone: HostedZone;
