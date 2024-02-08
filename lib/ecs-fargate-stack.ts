@@ -1,10 +1,6 @@
 import { type App, Stack, type StackProps } from "aws-cdk-lib";
 import { type Vpc } from "aws-cdk-lib/aws-ec2";
-import {
-  ContainerImage,
-  Cluster,
-  Secret as ecsSecret,
-} from "aws-cdk-lib/aws-ecs";
+import { ContainerImage, Cluster, Secret as ecsSecret } from "aws-cdk-lib/aws-ecs";
 import {
   ApplicationLoadBalancedFargateService,
   ApplicationLoadBalancedServiceRecordType,
@@ -26,11 +22,7 @@ export class ECSStack extends Stack {
 
     const containerPort = this.node.tryGetContext("containerPort") as number;
     const containerImage = this.node.tryGetContext("containerImage") as string;
-    const creds = Secret.fromSecretCompleteArn(
-      this,
-      "dbCreds",
-      props.dbSecretArn
-    );
+    const creds = Secret.fromSecretCompleteArn(this, "dbCreds", props.dbSecretArn);
     const subDomain = this.node.tryGetContext("subDomain") as string;
 
     const cluster = new Cluster(this, "Cluster", {
@@ -38,31 +30,25 @@ export class ECSStack extends Stack {
       clusterName: "fargateCluster",
     });
 
-    const fargateService = new ApplicationLoadBalancedFargateService(
-      this,
-      "fargateService",
-      {
-        cluster,
-        domainName: subDomain,
-        domainZone: props.hostedZone,
-        recordType: ApplicationLoadBalancedServiceRecordType.ALIAS,
-        desiredCount: 2,
-        taskImageOptions: {
-          image: ContainerImage.fromRegistry(
-            containerImage + `${process.env.RELEASE ?? "latest"}`
-          ),
-          containerPort,
-          enableLogging: true,
-          secrets: {
-            DSN: ecsSecret.fromSecretsManager(creds),
-          },
+    const fargateService = new ApplicationLoadBalancedFargateService(this, "fargateService", {
+      cluster,
+      domainName: subDomain,
+      domainZone: props.hostedZone,
+      recordType: ApplicationLoadBalancedServiceRecordType.ALIAS,
+      desiredCount: 2,
+      taskImageOptions: {
+        image: ContainerImage.fromRegistry(containerImage + `${process.env.RELEASE ?? "latest"}`),
+        containerPort,
+        enableLogging: true,
+        secrets: {
+          DSN: ecsSecret.fromSecretsManager(creds),
         },
-        publicLoadBalancer: true,
-        assignPublicIp: true,
-        serviceName: "fargateService",
-        certificate: props.cert,
-      }
-    );
+      },
+      publicLoadBalancer: true,
+      assignPublicIp: true,
+      serviceName: "fargateService",
+      certificate: props.cert,
+    });
 
     fargateService.targetGroup.configureHealthCheck({ path: "/ping" });
   }

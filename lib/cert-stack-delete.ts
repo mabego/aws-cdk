@@ -24,21 +24,14 @@ export class CertStackDelete extends Stack {
 
   deleteCertRecord(domain: string, hostedZone: HostedZone): void {
     const provider = new custom_resources.Provider(this, "Provider", {
-      onEventHandler: new aws_lambda_nodejs.NodejsFunction(
-        this,
-        "DeleteCertRecord",
-        {
-          initialPolicy: [
-            new PolicyStatement({
-              actions: [
-                "route53:changeResourceRecordSets",
-                "route53:listResourceRecordSets",
-              ],
-              resources: ["*"],
-            }),
-          ],
-        }
-      ),
+      onEventHandler: new aws_lambda_nodejs.NodejsFunction(this, "DeleteCertRecord", {
+        initialPolicy: [
+          new PolicyStatement({
+            actions: ["route53:changeResourceRecordSets", "route53:listResourceRecordSets"],
+            resources: ["*"],
+          }),
+        ],
+      }),
     });
     void new CustomResource(this, "CustomResource", {
       serviceToken: provider.serviceToken,

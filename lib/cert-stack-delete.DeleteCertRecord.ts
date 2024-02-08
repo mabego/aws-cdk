@@ -19,7 +19,7 @@ const changeAction: string = "DELETE";
 const deleteCertificateRecord = async (
   hostedZoneId: string,
   name: string,
-  value: string
+  value: string,
 ): Promise<PromiseResult<ChangeResourceRecordSetsResponse, AWSError>> =>
   await route53
     .changeResourceRecordSets({
@@ -41,11 +41,9 @@ const deleteCertificateRecord = async (
     .promise();
 
 const listResourceRecordSets = async (
-  hostedZoneId: string
+  hostedZoneId: string,
 ): Promise<PromiseResult<ListResourceRecordSetsResponse, AWSError>> =>
-  await route53
-    .listResourceRecordSets({ HostedZoneId: hostedZoneId })
-    .promise();
+  await route53.listResourceRecordSets({ HostedZoneId: hostedZoneId }).promise();
 
 export async function handler(event: any): Promise<any> {
   const { hostedZoneId } = event.ResourceProperties;
@@ -60,11 +58,17 @@ export async function handler(event: any): Promise<any> {
     return;
   }
 
-  const certRecord = recordSetsList.ResourceRecordSets.find(
-    (r) => r.Type === certRecordType
-  );
-  const certRecordName = certRecord?.Name as string;
-  const value = certRecord?.ResourceRecords?.find(Boolean)?.Value as string;
+  const certRecord = recordSetsList.ResourceRecordSets.find((r) => r.Type === certRecordType);
 
-  await deleteCertificateRecord(hostedZoneId, certRecordName, value);
+  let certRecordName: string | undefined;
+  if (certRecord?.Name !== null) {
+    certRecordName = certRecord?.Name;
+  }
+
+  let value: string | undefined;
+  if (certRecord?.ResourceRecords !== null) {
+    value = certRecord?.ResourceRecords?.find(Boolean)?.Value;
+  }
+
+  await deleteCertificateRecord(hostedZoneId, certRecordName!, value!);
 }
