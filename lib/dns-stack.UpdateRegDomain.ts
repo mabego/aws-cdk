@@ -10,10 +10,8 @@ const route53domains = new Route53Domains({ region: "us-east-1" }); // Route53Do
  */
 const updateRegisteredNameServers = async (
   domain: string,
-  nameServers: string
-): Promise<
-  PromiseResult<Route53Domains.Types.UpdateDomainNameserversResponse, AWSError>
-> =>
+  nameServers: string,
+): Promise<PromiseResult<Route53Domains.Types.UpdateDomainNameserversResponse, AWSError>> =>
   await route53domains
     .updateDomainNameservers({
       DomainName: domain,

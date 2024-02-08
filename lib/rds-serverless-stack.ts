@@ -22,7 +22,7 @@ export class RdsServerlessStack extends Stack {
     super(scope, id, props);
 
     const dbName = this.node.tryGetContext("dbName") as string;
-    const dbPort = (this.node.tryGetContext("dbPort") as number) || 3306;
+    const dbPort = (this.node.tryGetContext("dbPort") as number) ?? 3306;
     const dbUser = this.node.tryGetContext("dbUser") as string;
 
     this.dbSecret = new Secret(this, "dbCredentialsSecret", {
@@ -52,26 +52,22 @@ export class RdsServerlessStack extends Stack {
       },
     });
 
-    const mysqlRdsServerless = new ServerlessCluster(
-      this,
-      "mysqlRdsServerless",
-      {
-        engine: DatabaseClusterEngine.auroraMysql({
-          version: AuroraMysqlEngineVersion.VER_2_11_3,
-        }),
-        parameterGroup,
-        vpc: props.vpc,
-        vpcSubnets: { subnetType: SubnetType.PRIVATE_ISOLATED },
-        credentials: Credentials.fromSecret(this.dbSecret, dbUser),
-        scaling: {
-          minCapacity: AuroraCapacityUnit.ACU_1,
-          maxCapacity: AuroraCapacityUnit.ACU_1,
-        },
-        defaultDatabaseName: dbName,
-        deletionProtection: false,
-        removalPolicy: RemovalPolicy.DESTROY,
-      }
-    );
+    const mysqlRdsServerless = new ServerlessCluster(this, "mysqlRdsServerless", {
+      engine: DatabaseClusterEngine.auroraMysql({
+        version: AuroraMysqlEngineVersion.VER_2_11_3,
+      }),
+      parameterGroup,
+      vpc: props.vpc,
+      vpcSubnets: { subnetType: SubnetType.PRIVATE_ISOLATED },
+      credentials: Credentials.fromSecret(this.dbSecret, dbUser),
+      scaling: {
+        minCapacity: AuroraCapacityUnit.ACU_1,
+        maxCapacity: AuroraCapacityUnit.ACU_1,
+      },
+      defaultDatabaseName: dbName,
+      deletionProtection: false,
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
 
     mysqlRdsServerless.connections.allowFromAnyIpv4(Port.tcp(dbPort));
   }

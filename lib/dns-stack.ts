@@ -28,18 +28,14 @@ export class DnsStack extends Stack {
   /** A Custom Resource to update the Domain registrar with Hosted Zone name servers */
   updateRegDomain(domain: string, hostedZone: HostedZone): void {
     const provider = new custom_resources.Provider(this, "Provider", {
-      onEventHandler: new aws_lambda_nodejs.NodejsFunction(
-        this,
-        "UpdateRegDomain",
-        {
-          initialPolicy: [
-            new PolicyStatement({
-              actions: ["route53domains:UpdateDomainNameservers"],
-              resources: ["*"],
-            }),
-          ],
-        }
-      ),
+      onEventHandler: new aws_lambda_nodejs.NodejsFunction(this, "UpdateRegDomain", {
+        initialPolicy: [
+          new PolicyStatement({
+            actions: ["route53domains:UpdateDomainNameservers"],
+            resources: ["*"],
+          }),
+        ],
+      }),
     });
     void new CustomResource(this, "CustomResource", {
       serviceToken: provider.serviceToken,
